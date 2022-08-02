@@ -42,13 +42,15 @@
 (defun +default/yank-buffer-path (&optional root)
   "Copy the current buffer's path to the kill ring."
   (interactive)
-  (if-let (filename (or (buffer-file-name (buffer-base-buffer))
-                        (bound-and-true-p list-buffers-directory)))
-      (message "Copied path to clipboard: %s"
-               (kill-new (abbreviate-file-name
-                          (if root
-                              (file-relative-name filename root)
-                            filename))))
+  (if-let* ((filename (or (buffer-file-name (buffer-base-buffer))
+                          (bound-and-true-p list-buffers-directory)))
+            (path (abbreviate-file-name
+                   (if root
+                       (file-relative-name filename root)
+                     filename))))
+      (progn
+        (kill-new path)
+        (message "Copied path: %s" path))
     (error "Couldn't find filename in current buffer")))
 
 ;;;###autoload
